@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doctorak.Server", "Doctorak.Server\Doctorak.Server.csproj", "{0FCDEFC6-5070-4601-B83F-184735BED96E}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "doctorak.client", "Doctorak.Client\doctorak.client.esproj", "{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,12 @@ Global
 		{0FCDEFC6-5070-4601-B83F-184735BED96E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FCDEFC6-5070-4601-B83F-184735BED96E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FCDEFC6-5070-4601-B83F-184735BED96E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADB17AB6-BAC9-4740-AB7D-8F3EE0C4E17A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
