@@ -54,10 +54,11 @@ public class AuthService : IAuthService
     public async Task<bool> UserExists(string email, string number)
     {
         return await _context.Users.AnyAsync(u =>
-            (u.Email != null && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+            (u.Email != null && u.Email.ToLower() == email.ToLower()) ||
             (u.Number != null && u.Number.Equals(number))
         );
     }
+
 
     //validate password
     private bool ValidPassword(string password)
