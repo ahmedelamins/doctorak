@@ -1,7 +1,6 @@
 ﻿namespace Doctorak.Server.DTOs;
 public class UserRegister
 {
-    [EmailAddress]
     public string? Email { get; set; }
     public string? Number { get; set; }
     [Required]
