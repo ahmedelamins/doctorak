@@ -13,7 +13,13 @@ public class AuthService : IAuthService
 
         try
         {
+            if (await UserExists(user.Email, user.Number))
+            {
+                response.Success = false;
+                response.Message = "Email or Number is already registerd.";
 
+                return response;
+            }
         }
         catch (Exception ex)
         {
@@ -31,6 +37,17 @@ public class AuthService : IAuthService
             (u.Email != null && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
             (u.Number != null && u.Number.Equals(number))
         );
+    }
+
+    //validate password
+    private bool ValidPassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 5)
+        {
+            return false;
+        }
+
+        return true;
     }
 
 }
