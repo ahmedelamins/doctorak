@@ -27,4 +27,6 @@ public class User
     //password hash and salt
     public byte[] PasswordHash { get; set; } = new byte[32];
     public byte[] PasswordSalt { get; set; } = new byte[32];
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
