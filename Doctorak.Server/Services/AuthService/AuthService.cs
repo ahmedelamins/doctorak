@@ -1,11 +1,17 @@
-﻿namespace Doctorak.Server.Services.AuthService;
+﻿using Doctorak.Server.Services.EmailService;
+
+namespace Doctorak.Server.Services.AuthService;
 public class AuthService : IAuthService
 {
     private readonly DataContext _context;
+    private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
-    public AuthService(DataContext context)
+    public AuthService(DataContext context, IConfiguration configuration, IEmailService emailService)
     {
         _context = context;
+        _configuration = configuration;
+        _emailService = emailService;
     }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
@@ -30,12 +36,22 @@ public class AuthService : IAuthService
             else
             {
                 CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
+                //generate verification code 
+                var confirmationToken = Guid.NewGuid().ToString();
+                user.EmailConfirmationToken = confirmationToken;
+                user.IsEmailConfirmed = false;
+
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
+
+                //send confirmation email
+                var confirmationUrl = $"{_configuration["AppUrl"]}/confirm-email?token={confirmationToken}&email={user.Email}";
+                var emailBody = $"Please confirm your email by clicking <a href='{confirmationUrl}'>here</a>.";
+
+                await _emailService.SendEmail(user.Email, user.FirstName, "Confirm Your Email", emailBody);
 
                 response.Data = user.Id;
                 response.Message = "Welcome!";
