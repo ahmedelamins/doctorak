@@ -21,6 +21,9 @@ namespace Doctorak.Server.Controllers
                 return BadRequest("Either Email or Phone number must be provided.");
             }
 
+            //format the number correctly
+            string formattedNumber = string.IsNullOrEmpty(request.Number) ? null : $"+249{request.Number}";
+
             var response = await _authService
                 .Register(
                     new User
@@ -28,7 +31,7 @@ namespace Doctorak.Server.Controllers
                         FirstName = request.FirstName,
                         LastName = request.LastName,
                         Email = request.Email,
-                        Number = request.Number,
+                        Number = formattedNumber,
                     },
                     request.Password
                 );

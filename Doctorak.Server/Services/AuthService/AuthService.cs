@@ -63,7 +63,6 @@ public class AuthService : IAuthService
         );
     }
 
-
     //validate password
     private bool ValidPassword(string password)
     {
