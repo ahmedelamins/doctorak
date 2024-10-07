@@ -20,6 +20,26 @@ public class AuthService : IAuthService
 
                 return response;
             }
+            else if (!ValidPassword(password))
+            {
+                response.Success = false;
+                response.Message = "Invalid password.";
+
+                return response;
+            }
+            else
+            {
+                CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                response.Data = user.Id;
+                response.Message = "Welcome!";
+            }
         }
         catch (Exception ex)
         {
@@ -48,6 +68,16 @@ public class AuthService : IAuthService
         }
 
         return true;
+    }
+
+    //password hash and salt
+    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512())
+        {
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+        }
     }
 
 }
