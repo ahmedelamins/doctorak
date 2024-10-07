@@ -13,10 +13,10 @@ public class AuthService : IAuthService
 
         try
         {
-            if (await UserExists(user.Email, user.Number))
+            if (await UserExists(user.Email))
             {
                 response.Success = false;
-                response.Message = "Email or Number is already registerd.";
+                response.Message = "this Email is already registerd!";
 
                 return response;
             }
@@ -51,15 +51,10 @@ public class AuthService : IAuthService
     }
 
     //check if a user exists
-    public async Task<bool> UserExists(string email, string number)
+    public async Task<bool> UserExists(string email)
     {
-        // Format the number with country code
-        string formattedNumber = !string.IsNullOrEmpty(number) ? $"+249{number}" : null;
-
-        // Check if either the email or the formatted number exists in the database
         return await _context.Users.AnyAsync(u =>
-            (!string.IsNullOrEmpty(email) && u.Email.ToLower() == email.ToLower()) ||
-            (!string.IsNullOrEmpty(formattedNumber) && u.Number == formattedNumber)
+            u.Email.ToLower().Equals(email.ToLower())
         );
     }
 
