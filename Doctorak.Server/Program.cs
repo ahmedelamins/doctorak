@@ -25,7 +25,11 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 //registering repositories
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailService>(provider =>
+{
+    var apiKey = Environment.GetEnvironmentVariable("ApiKey");
+    return new EmailService(apiKey);
+});
 
 var app = builder.Build();
 
