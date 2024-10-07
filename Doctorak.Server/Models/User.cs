@@ -14,6 +14,7 @@ public class User
     // register with an email OR a phone number
     [EmailAddress]
     public string? Email { get; set; } = string.Empty;
+    [Phone]
     public string? Number { get; set; } = string.Empty;
 
     //trcack email/number confirmation
