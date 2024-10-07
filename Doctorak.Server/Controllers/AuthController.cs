@@ -16,22 +16,18 @@ namespace Doctorak.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<ServiceResponse<int>>> Register([FromBody] UserRegister request)
         {
-            if (string.IsNullOrEmpty(request.Email) && string.IsNullOrEmpty(request.Number))
+            if (string.IsNullOrEmpty(request.Email))
             {
-                return BadRequest("Either Email or Phone number must be provided.");
+                return BadRequest("an Email must be provided.");
             }
-
-            //format the number correctly
-            string formattedNumber = string.IsNullOrEmpty(request.Number) ? null : $"+249{request.Number}";
 
             var response = await _authService
                 .Register(
                     new User
                     {
+                        Email = request.Email,
                         FirstName = request.FirstName,
                         LastName = request.LastName,
-                        Email = request.Email,
-                        Number = formattedNumber,
                     },
                     request.Password
                 );
