@@ -28,7 +28,7 @@ public class AuthService : IAuthService
     public async Task<bool> UserExists(string email, string number)
     {
         return await _context.Users.AnyAsync(u =>
-            (u.Email != null && u.Email.ToLower().Equals(email.ToLower())) ||
+            (u.Email != null && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
             (u.Number != null && u.Number.Equals(number))
         );
     }
