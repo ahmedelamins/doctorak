@@ -1,4 +1,6 @@
-﻿namespace Doctorak.Server.Services.AuthService;
+﻿using System.Security.Cryptography;
+
+namespace Doctorak.Server.Services.AuthService;
 
 public class AuthService : IAuthService
 {
@@ -25,7 +27,19 @@ public class AuthService : IAuthService
             {
                 response.Success = false;
                 response.Message = "Invalid password";
+            }
+            else
+            {
+                CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                response.Data = user.Id;
+                response.Message = "Welcome!";
             }
 
         }
@@ -38,17 +52,27 @@ public class AuthService : IAuthService
         return response;
     }
 
-    //validate password
-    private bool ValidPassword(string password)
-    {
-        return password.Length > 5;
-    }
-
     //check user exists
     private async Task<bool> UserExists(string email)
     {
         return await _context.Users.AnyAsync(
             u => u.Email.ToLower().Equals(email.ToLower())
         );
+    }
+
+    //validate password
+    private bool ValidPassword(string password)
+    {
+        return password.Length > 5;
+    }
+
+    //hash password   
+    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512())
+        {
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+        }
     }
 }
