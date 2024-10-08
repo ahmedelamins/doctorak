@@ -63,7 +63,7 @@ public class AuthService : IAuthService
     //validate password
     private bool ValidPassword(string password)
     {
-        return password.Length > 5;
+        return password.Length >= 5;
     }
 
     //hash password   
