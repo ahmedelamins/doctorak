@@ -65,6 +65,40 @@ public class AuthService : IAuthService
 
         return response;
     }
+    public async Task<ServiceResponse<bool>> ConfirmEmail(string token, string email)
+    {
+        var response = new ServiceResponse<bool>();
+
+        //find user by email and confirmation number
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.EmailConfirmationToken == token);
+
+        //check if user is null or already confirmed
+        if (user == null || user.IsEmailConfirmed)
+        {
+            response.Success = false;
+            response.Message = "Invalid token or Email";
+
+            return response;
+        }
+
+        user.IsEmailConfirmed = true;  //marked as confirmed
+        user.EmailConfirmationToken = null;  //invalidate token
+
+        try
+        {
+            await _context.SaveChangesAsync();
+
+            response.Message = "Email confirmed";
+            response.Data = true;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
 
     //check if a user exists
     public async Task<bool> UserExists(string email)
