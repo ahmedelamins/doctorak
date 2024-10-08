@@ -52,6 +52,32 @@ public class AuthService : IAuthService
         return response;
     }
 
+    public async Task<ServiceResponse<string>> Login(string email, string password)
+    {
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower()
+            .Equals(email.ToLower()));
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User does not exist";
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
     //check user exists
     private async Task<bool> UserExists(string email)
     {
@@ -73,6 +99,18 @@ public class AuthService : IAuthService
         {
             passwordSalt = hmac.Key;
             passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+        }
+    }
+
+    //verify passwords
+    private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+            var computeHash =
+            hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+
+            return computeHash.SequenceEqual(passwordHash);
         }
     }
 }
