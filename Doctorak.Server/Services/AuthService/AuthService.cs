@@ -1,6 +1,5 @@
-﻿using Doctorak.Server.Services.EmailService;
+﻿namespace Doctorak.Server.Services.AuthService;
 
-namespace Doctorak.Server.Services.AuthService;
 public class AuthService : IAuthService
 {
     private readonly DataContext _context;
@@ -39,57 +38,14 @@ public class AuthService : IAuthService
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
-                //generate verification code 
-                var confirmationToken = Guid.NewGuid().ToString();
-                user.EmailConfirmationToken = confirmationToken;
-                user.IsEmailConfirmed = false;
+
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                //send confirmation email
-                var confirmationUrl = $"{_configuration["AppUrl"]}/confirm-email?token={confirmationToken}&email={user.Email}";
-                var emailBody = $"Please confirm your email by clicking <a href='{confirmationUrl}'>here</a>.";
-
-                await _emailService.SendEmail(user.Email, user.FirstName, "Confirm Your Email", emailBody);
-
                 response.Data = user.Id;
                 response.Message = "Welcome!";
             }
-        }
-        catch (Exception ex)
-        {
-            response.Success = false;
-            response.Message = ex.Message;
-        }
-
-        return response;
-    }
-    public async Task<ServiceResponse<bool>> ConfirmEmail(string token, string email)
-    {
-        var response = new ServiceResponse<bool>();
-
-        //find user by email and confirmation number
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.EmailConfirmationToken == token);
-
-        //check if user is null or already confirmed
-        if (user == null || user.IsEmailConfirmed)
-        {
-            response.Success = false;
-            response.Message = "Invalid token or Email";
-
-            return response;
-        }
-
-        user.IsEmailConfirmed = true;  //marked as confirmed
-        user.EmailConfirmationToken = null;  //invalidate token
-
-        try
-        {
-            await _context.SaveChangesAsync();
-
-            response.Message = "Email confirmed";
-            response.Data = true;
         }
         catch (Exception ex)
         {
