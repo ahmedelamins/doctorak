@@ -1,14 +1,19 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace Doctorak.Server.Services.AuthService;
 
 public class AuthService : IAuthService
 {
     private readonly DataContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(DataContext context)
+    public AuthService(DataContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
@@ -39,7 +44,7 @@ public class AuthService : IAuthService
                 await _context.SaveChangesAsync();
 
                 response.Data = user.Id;
-                response.Message = "Welcome!";
+                response.Message = "User created";
             }
 
         }
@@ -67,6 +72,16 @@ public class AuthService : IAuthService
                 response.Message = "User does not exist";
 
                 return response;
+            }
+            else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Wrong password";
+            }
+            else
+            {
+                response.Data = CreateToken(user);
+                response.Message = "Welcome back!";
             }
         }
         catch (Exception ex)
@@ -113,4 +128,30 @@ public class AuthService : IAuthService
             return computeHash.SequenceEqual(passwordHash);
         }
     }
+
+    //create token
+    private string CreateToken(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email.ToLower()),
+        };
+
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+            .GetBytes(_configuration.GetSection("AppSetting:Token").Value));
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken
+            (
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+            );
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return jwt;
+    }
+
 }
