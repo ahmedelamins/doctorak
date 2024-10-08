@@ -135,7 +135,7 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email.ToLower()),
+            new Claim(ClaimTypes.Name, user.Email.ToLower()),
         };
 
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
