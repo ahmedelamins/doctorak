@@ -36,7 +36,7 @@ public class AuthController : ControllerBase
 
         if (!response.Success)
         {
-            return BadRequest(response.Message);
+            return BadRequest(response);
         }
 
 
