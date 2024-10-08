@@ -1,12 +1,9 @@
 global using Doctorak.Server.Data;
-global using Doctorak.Server.DTOs;
 global using Doctorak.Server.Models;
-global using Doctorak.Server.Services.AuthService;
-global using Doctorak.Server.Services.EmailService;
 global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
-global using System.Security.Cryptography;
+using Doctorak.Server.Services.AuthService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,11 +22,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 //registering repositories
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IEmailService>(provider =>
-{
-    var apiKey = Environment.GetEnvironmentVariable("ApiKey");
-    return new EmailService(apiKey);
-});
+
 
 var app = builder.Build();
 
