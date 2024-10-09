@@ -71,7 +71,7 @@ public class AuthService : IAuthService
 
         try
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower().Equals(email.ToLower()));
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
             {
@@ -91,6 +91,8 @@ public class AuthService : IAuthService
             user.VerificationCode = null;
 
             await _context.SaveChangesAsync();
+
+            response.Message = "Email verified successfully";
         }
         catch (Exception ex)
         {
