@@ -49,7 +49,11 @@ public class AuthService : IAuthService
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                await _emailService.SendEmail(user.Email, "Email Verificatio Code", $"Your verification code is: {user.VerificationCode}");
+                string emailBody = "<h4>Your verification code is:</h4>" +
+                                   $"<h1>{user.VerificationCode}</1>";
+
+
+                await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
 
                 response.Data = user.Id;
                 response.Message = "User created, please confirm email address";
@@ -91,6 +95,12 @@ public class AuthService : IAuthService
             user.VerificationCode = null;
 
             await _context.SaveChangesAsync();
+
+            string emailBody = "<h1>Welcome to Doctorak!</h1>" +
+                                  $"<h2>Our team is very happy to have you!</h2>";
+
+
+            await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
 
             response.Message = "Email verified successfully";
         }
