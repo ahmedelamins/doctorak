@@ -15,7 +15,12 @@ public class EmailService : IEmailService
     {
         try
         {
-            var smtpSettings = _config.GetSection("SmptSettings");
+            var smtpSettings = _config.GetSection("DoctorakTeam:SmtpSettings");
+
+            if (string.IsNullOrEmpty(smtpSettings["Port"]))
+            {
+                throw new ArgumentException("SMTP port is not defined in the configuration.");
+            }
 
             var smtpClient = new SmtpClient(smtpSettings["Server"])
             {
@@ -38,7 +43,8 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            Console.WriteLine(ex.Message);
         }
     }
+
 }
