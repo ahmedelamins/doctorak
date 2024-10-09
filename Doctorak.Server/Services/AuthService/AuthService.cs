@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Doctorak.Server.Services.EmailService;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -9,11 +10,13 @@ public class AuthService : IAuthService
 {
     private readonly DataContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
-    public AuthService(DataContext context, IConfiguration configuration)
+    public AuthService(DataContext context, IConfiguration configuration, IEmailService emailService)
     {
         _context = context;
         _configuration = configuration;
+        _emailService = emailService;
     }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
@@ -43,8 +46,20 @@ public class AuthService : IAuthService
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
+                //generate varification token
+                //var verificationToken = Guid.NewGuid().ToString();
+
+                //// Store the token in the user object or send it directly in the email
+                //// Here we just send it in the email
+                //string emailBody = $"<h1>Welcome to Doctorak!</h1>" +
+                //                   $"<p>Please verify your email by clicking this link: " +
+                //                   $"<a href=https://localhost:7244/verify-email?token={verificationToken}'>Verify Email</a></p>";
+
+                //await _emailService.SendEmail(user.Email, "Verify Your Email", emailBody);
+
                 response.Data = user.Id;
-                response.Message = "User created";
+                response.Message = "User created, please confirm email address";
+
             }
 
         }
@@ -129,6 +144,13 @@ public class AuthService : IAuthService
         }
     }
 
+    //generating random code
+    private string GenerateRandomCode()
+    {
+        var random = new Random();
+        return random.Next(100000, 999999).ToString();
+    }
+
     //create token
     private string CreateToken(User user)
     {
@@ -155,5 +177,6 @@ public class AuthService : IAuthService
 
         return jwt;
     }
+
 
 }
