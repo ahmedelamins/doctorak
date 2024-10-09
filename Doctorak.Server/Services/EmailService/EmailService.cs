@@ -1,4 +1,7 @@
-﻿namespace Doctorak.Server.Services.EmailService;
+﻿using System.Net;
+using System.Net.Mail;
+
+namespace Doctorak.Server.Services.EmailService;
 
 public class EmailService : IEmailService
 {
@@ -12,7 +15,26 @@ public class EmailService : IEmailService
     {
         try
         {
-            var smptSettings = _config.GetSection("SmptSettings");
+            var smtpSettings = _config.GetSection("SmptSettings");
+
+            var smtpClient = new SmtpClient(smtpSettings["Server"])
+            {
+                Port = int.Parse(smtpSettings["Port"]),
+                Credentials = new NetworkCredential(smtpSettings["Username"], smtpSettings["Password"]),
+                EnableSsl = true
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(smtpSettings["FromEmail"]),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(toEmail);
+
+            await smtpClient.SendMailAsync(mailMessage);
         }
         catch (Exception ex)
         {
