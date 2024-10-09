@@ -11,10 +11,8 @@ public class User
     public string LastName { get; set; } = string.Empty;
     [Required, EmailAddress]
     public string Email { get; set; } = string.Empty;
-    public string? VerificationToken { get; set; }
-    public string? PasswordResetToken { get; set; }
-    public DateTime? ResetTokenExpires { get; set; }
     public byte[] PasswordHash { get; set; } = new byte[32];
     public byte[] PasswordSalt { get; set; } = new byte[32];
+    public bool Verified { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 }
