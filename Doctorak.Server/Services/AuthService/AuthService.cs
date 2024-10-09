@@ -38,30 +38,59 @@ public class AuthService : IAuthService
             }
             else
             {
+                user.VerificationCode = GenerateRandomCode();
+
                 CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
+
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
 
-                //generate varification token
-                //var verificationToken = Guid.NewGuid().ToString();
-
-                //// Store the token in the user object or send it directly in the email
-                //// Here we just send it in the email
-                //string emailBody = $"<h1>Welcome to Doctorak!</h1>" +
-                //                   $"<p>Please verify your email by clicking this link: " +
-                //                   $"<a href=https://localhost:7244/verify-email?token={verificationToken}'>Verify Email</a></p>";
-
-                //await _emailService.SendEmail(user.Email, "Verify Your Email", emailBody);
+                await _emailService.SendEmail(user.Email, "Email Verificatio Code", $"Your verification code is: {user.VerificationCode}");
 
                 response.Data = user.Id;
                 response.Message = "User created, please confirm email address";
 
             }
 
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+    public async Task<ServiceResponse<string>> VerifyEmail(string email, string code)
+    {
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower().Equals(email.ToLower()));
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found!";
+
+                return response;
+            }
+
+            if (user.VerificationCode != code)
+            {
+                response.Success = false;
+                response.Message = "Invalid code";
+            }
+
+            user.Verified = true;
+            user.VerificationCode = null;
+
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -177,6 +206,5 @@ public class AuthService : IAuthService
 
         return jwt;
     }
-
 
 }
