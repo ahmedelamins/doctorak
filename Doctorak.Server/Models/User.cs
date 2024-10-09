@@ -14,5 +14,5 @@ public class User
     public byte[] PasswordSalt { get; set; } = new byte[32];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool Verified { get; set; } = false;
-    public string VerificationCode { get; set; }
+    public string? VerificationCode { get; set; }
 }
