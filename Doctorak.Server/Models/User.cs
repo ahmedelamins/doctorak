@@ -1,5 +1,4 @@
 ﻿namespace Doctorak.Server.Models;
-
 public class User
 {
     [Key]
@@ -13,6 +12,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public byte[] PasswordHash { get; set; } = new byte[32];
     public byte[] PasswordSalt { get; set; } = new byte[32];
-    public bool Verified { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public bool Verified { get; set; } = false;
+    public string VerificationCode { get; set; }
 }
