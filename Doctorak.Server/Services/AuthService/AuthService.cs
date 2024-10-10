@@ -205,61 +205,6 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
-    {
-        var response = new ServiceResponse<bool>();
-
-        try
-        {
-            var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-            {
-                response.Success = false;
-                response.Message = "User not found!";
-
-                return response;
-            }
-
-            if (!VerifyPasswordHash(newPassword, user.PasswordHash, user.PasswordSalt))
-            {
-                response.Success = false;
-                response.Message = "Please enter a new password";
-
-                return response;
-            }
-
-            if (!ValidPassword(newPassword))
-            {
-                response.Success = false;
-                response.Message = "Invalid Password";
-
-                return response;
-            }
-
-            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
-
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
-
-            await _context.SaveChangesAsync();
-
-            response.Data = true;
-            response.Message = "Password has been changed.";
-
-            return response;
-
-        }
-        catch (Exception ex)
-        {
-            response.Success = false;
-            response.Message = ex.Message;
-
-            return response;
-        }
-
-    }
-
     public async Task<ServiceResponse<string>> Login(string email, string password)
     {
         var response = new ServiceResponse<string>();
@@ -287,6 +232,61 @@ public class AuthService : IAuthService
 
             response.Data = CreateToken(user);
             response.Message = "Welcome back!";
+
+            return response;
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+
+    }
+
+    public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
+    {
+        var response = new ServiceResponse<bool>();
+
+        try
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found!";
+
+                return response;
+            }
+
+            if (VerifyPasswordHash(newPassword, user.PasswordHash, user.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Please enter a new password";
+
+                return response;
+            }
+
+            if (!ValidPassword(newPassword))
+            {
+                response.Success = false;
+                response.Message = "Invalid Password";
+
+                return response;
+            }
+
+            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PasswordSalt = passwordSalt;
+            user.PasswordHash = passwordHash;
+
+            await _context.SaveChangesAsync();
+
+            response.Data = true;
+            response.Message = "Password has been changed.";
 
             return response;
 
