@@ -279,11 +279,16 @@ public class AuthService : IAuthService
 
             await _context.SaveChangesAsync();
 
+            string emailBody = $"<h1>Dear, {user.FirstName},</h1>" +
+                                  "<h2>Your password has been change.</h2>";
+
+
+            await _emailService.SendEmail(user.Email, "Password Has Been Changed", emailBody);
+
             response.Data = true;
             response.Message = "Password has been changed.";
 
             return response;
-
         }
         catch (Exception ex)
         {
