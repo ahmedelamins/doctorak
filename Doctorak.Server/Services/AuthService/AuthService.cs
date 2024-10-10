@@ -113,7 +113,6 @@ public class AuthService : IAuthService
         return response;
     }
 
-
     public async Task<ServiceResponse<string>> ForgotPassword(string email)
     {
         var response = new ServiceResponse<string>();
@@ -139,6 +138,49 @@ public class AuthService : IAuthService
 
             response.Message = "Password reset code has been sent to your email";
 
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+    public async Task<ServiceResponse<string>> VerifyPasswordReset(string email, string code)
+    {
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found!";
+
+                return response;
+            }
+
+            if (user.VerificationCode != code)
+            {
+                response.Success = false;
+                response.Message = "Invalid code";
+            }
+
+            user.VerificationCode = null;
+
+            //await _context.SaveChangesAsync();
+
+            //string emailBody = "<h1>Your Password has been</h1>" +
+            //                      $"<h2>Our team is very happy to have you.</h2>";
+
+
+            //await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
+
+            response.Message = "Email verified successfully";
         }
         catch (Exception ex)
         {
