@@ -185,12 +185,6 @@ public class AuthService : IAuthService
 
             await _context.SaveChangesAsync();
 
-            //string emailBody = "<h1>Your Password has been</h1>" +
-            //                      $"<h2>Our team is very happy to have you.</h2>";
-
-
-            //await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
-
             response.Message = "Password reset verified";
 
             return response;
