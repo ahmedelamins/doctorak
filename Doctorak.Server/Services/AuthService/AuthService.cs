@@ -97,12 +97,48 @@ public class AuthService : IAuthService
             await _context.SaveChangesAsync();
 
             string emailBody = "<h1>Welcome to Doctorak!</h1>" +
-                                  $"<h2>Our team is very happy to have you!</h2>";
+                                  $"<h2>Our team is very happy to have you.</h2>";
 
 
             await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
 
             response.Message = "Email verified successfully";
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
+
+    public async Task<ServiceResponse<string>> ForgotPassword(string email)
+    {
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found";
+            }
+
+            user.VerificationCode = GenerateRandomCode();
+
+            await _context.SaveChangesAsync();
+
+            string emailBody = "<h4>Your password reset code is:</h4>" +
+                                   $"<h1>{user.VerificationCode}</1>";
+
+            await _emailService.SendEmail(user.Email, "Reset Your Password", emailBody);
+
+            response.Message = "Password reset code has been sent to your email";
+
         }
         catch (Exception ex)
         {
