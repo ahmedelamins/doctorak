@@ -191,6 +191,53 @@ public class AuthService : IAuthService
         return response;
     }
 
+    public async Task<ServiceResponse<bool>> ChangePassword(string email, string newPassword)
+    {
+        var response = new ServiceResponse<bool>();
+
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found!";
+            }
+
+            else if (!VerifyPasswordHash(newPassword, user.PasswordHash, user.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Please enter a new password";
+            }
+            else if (!ValidPassword(newPassword))
+            {
+                response.Success = false;
+                response.Message = "Invalid Password";
+            }
+            else
+            {
+                CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
+
+                user.PasswordSalt = passwordSalt;
+                user.PasswordHash = passwordHash;
+
+                await _context.SaveChangesAsync();
+
+                response.Data = true;
+                response.Message = "Password has been changed.";
+            }
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+        }
+
+        return response;
+    }
+
     public async Task<ServiceResponse<string>> Login(string email, string password)
     {
         var response = new ServiceResponse<string>();
