@@ -1,6 +1,7 @@
 ﻿using Doctorak.Server.DTOs;
 using Doctorak.Server.Services.AuthService;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Doctorak.Server.Controllers;
 
@@ -93,6 +94,22 @@ public class AuthController : ControllerBase
         }
 
         return Ok(response);
+    }
+
+    [HttpPost("change-password")]
+    public async Task<ActionResult<bool>> ChangePassword([FromBody] ChangePassword request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var response = await _authService.ChangePassword(int.Parse(userId), request.password, request.ConfirmPassword);
+
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+
+        return Ok(response);
+
     }
 
 }
