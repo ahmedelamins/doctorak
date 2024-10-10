@@ -279,7 +279,7 @@ public class AuthService : IAuthService
 
             await _context.SaveChangesAsync();
 
-            string emailBody = $"<h1>Dear, {user.FirstName},</h1>" +
+            string emailBody = $"<h1>Dear {user.FirstName},</h1>" +
                                   "<h2>Your password has been change.</h2>";
 
 
