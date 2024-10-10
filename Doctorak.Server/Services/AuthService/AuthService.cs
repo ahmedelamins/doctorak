@@ -100,8 +100,8 @@ public class AuthService : IAuthService
 
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h1>Welcome to Doctorak!</h1>" +
-                                  $"<h2>Our team is very happy to have you.</h2>";
+            string emailBody = $"<h1>Dear {user.FirstName},</h1>" +
+                                  "<h4>Welcome to Doctorak! We are very happy to have you.</h4>";
 
 
             await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
@@ -280,7 +280,7 @@ public class AuthService : IAuthService
             await _context.SaveChangesAsync();
 
             string emailBody = $"<h1>Dear {user.FirstName},</h1>" +
-                                  "<h2>Your password has been change.</h2>";
+                                  "<h4>Your password has been change.</h4>";
 
 
             await _emailService.SendEmail(user.Email, "Password Has Been Changed", emailBody);
