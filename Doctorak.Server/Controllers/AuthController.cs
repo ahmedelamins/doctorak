@@ -43,6 +43,19 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("verify-email")]
+    public async Task<IActionResult> VerifyEmail(string email, string code)
+    {
+        var response = await _authService.VerifyEmail(email, code);
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
     [HttpPost("login")]
     public async Task<ActionResult<ServiceResponse<string>>> Login([FromBody] UserLogin request)
     {
@@ -56,23 +69,23 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("verify-email")]
-    public async Task<IActionResult> VerifyEmail(string email, string code)
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(string email)
     {
-        var response = await _authService.VerifyEmail(email, code);
+        var response = await _authService.ForgotPassword(email);
 
         if (!response.Success)
         {
-            return BadRequest(response);
+            return BadRequest(response.Message);
         }
 
         return Ok(response);
     }
 
-    [HttpGet("forgot-password")]
-    public async Task<IActionResult> ForgotPassword(string email)
+    [HttpPost("verify-password-reset")]
+    public async Task<IActionResult> VerifyReset(string email, string code)
     {
-        var response = await _authService.ForgotPassword(email);
+        var response = await _authService.VerifyPasswordReset(email, code);
 
         if (!response.Success)
         {

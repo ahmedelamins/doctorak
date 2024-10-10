@@ -170,7 +170,7 @@ public class AuthService : IAuthService
                 response.Message = "Invalid code";
             }
 
-            user.VerificationCode = null;
+            user.PasswordResetCode = null;
 
             //await _context.SaveChangesAsync();
 
