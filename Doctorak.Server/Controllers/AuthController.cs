@@ -101,7 +101,7 @@ public class AuthController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var response = await _authService.ChangePassword(int.Parse(userId), request.password, request.ConfirmPassword);
+        var response = await _authService.ChangePassword(int.Parse(userId), request.password);
 
         if (!response.Success)
         {
