@@ -27,47 +27,49 @@ public class AuthService : IAuthService
             if (await UserExists(user.Email))
             {
                 response.Success = false;
-                response.Message = "Email is already in use";
+                response.Message = "Email is already used";
 
                 return response;
             }
-            else if (!ValidPassword(password))
+
+            if (!ValidPassword(password))
             {
                 response.Success = false;
                 response.Message = "Invalid password";
-            }
-            else
-            {
-                user.VerificationCode = GenerateRandomCode();
-
-                CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
-
-
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                string emailBody = "<h4>Your verification code is:</h4>" +
-                                   $"<h1>{user.VerificationCode}</1>";
-
-
-                await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
-
-                response.Data = user.Id;
-                response.Message = "User created, please confirm email address";
-
+                return response;
             }
 
+
+            user.VerificationCode = GenerateRandomCode();
+
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            string emailBody = "<h4>Your verification code is:</h4>" +
+                               $"<h1>{user.VerificationCode}</1>";
+
+
+            await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
+
+            response.Data = user.Id;
+            response.Message = "User created, please confirm email address";
+
+            return response;
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
+
+            return response;
         }
 
-        return response;
     }
     public async Task<ServiceResponse<string>> VerifyEmail(string email, string code)
     {
@@ -89,6 +91,8 @@ public class AuthService : IAuthService
             {
                 response.Success = false;
                 response.Message = "Invalid code";
+
+                return response;
             }
 
             user.Verified = true;
@@ -103,14 +107,16 @@ public class AuthService : IAuthService
             await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
 
             response.Message = "Email verified successfully";
+
+            return response;
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
+            return response;
         }
 
-        return response;
     }
 
     public async Task<ServiceResponse<string>> ForgotPassword(string email)
@@ -125,6 +131,8 @@ public class AuthService : IAuthService
             {
                 response.Success = false;
                 response.Message = "User not found";
+
+                return response;
             }
 
             user.VerificationCode = GenerateRandomCode();
@@ -138,14 +146,15 @@ public class AuthService : IAuthService
 
             response.Message = "Password reset code has been sent to your email";
 
+            return response;
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
-        }
 
-        return response;
+            return response;
+        }
     }
 
     public async Task<ServiceResponse<string>> VerifyPasswordReset(string email, string code)
@@ -168,11 +177,13 @@ public class AuthService : IAuthService
             {
                 response.Success = false;
                 response.Message = "Invalid code";
+
+                return response;
             }
 
             user.PasswordResetCode = null;
 
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             //string emailBody = "<h1>Your Password has been</h1>" +
             //                      $"<h2>Our team is very happy to have you.</h2>";
@@ -180,62 +191,73 @@ public class AuthService : IAuthService
 
             //await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
 
-            response.Message = "Email verified successfully";
+            response.Message = "Password reset verified";
+
+            return response;
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
+
+            return response;
         }
 
-        return response;
     }
 
-    public async Task<ServiceResponse<bool>> ChangePassword(string email, string newPassword)
+    public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
     {
         var response = new ServiceResponse<bool>();
 
         try
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FindAsync(userId);
 
             if (user == null)
             {
                 response.Success = false;
                 response.Message = "User not found!";
+
+                return response;
             }
 
-            else if (!VerifyPasswordHash(newPassword, user.PasswordHash, user.PasswordSalt))
+            if (!VerifyPasswordHash(newPassword, user.PasswordHash, user.PasswordSalt))
             {
                 response.Success = false;
                 response.Message = "Please enter a new password";
+
+                return response;
             }
-            else if (!ValidPassword(newPassword))
+
+            if (!ValidPassword(newPassword))
             {
                 response.Success = false;
                 response.Message = "Invalid Password";
+
+                return response;
             }
-            else
-            {
-                CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
 
-                user.PasswordSalt = passwordSalt;
-                user.PasswordHash = passwordHash;
+            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
 
-                await _context.SaveChangesAsync();
+            user.PasswordSalt = passwordSalt;
+            user.PasswordHash = passwordHash;
 
-                response.Data = true;
-                response.Message = "Password has been changed.";
-            }
+            await _context.SaveChangesAsync();
+
+            response.Data = true;
+            response.Message = "Password has been changed.";
+
+            return response;
 
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
+
+            return response;
         }
 
-        return response;
     }
 
     public async Task<ServiceResponse<string>> Login(string email, string password)
@@ -254,24 +276,29 @@ public class AuthService : IAuthService
 
                 return response;
             }
-            else if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
             {
                 response.Success = false;
                 response.Message = "Wrong password";
+
+                return response;
             }
-            else
-            {
-                response.Data = CreateToken(user);
-                response.Message = "Welcome back!";
-            }
+
+            response.Data = CreateToken(user);
+            response.Message = "Welcome back!";
+
+            return response;
+
         }
         catch (Exception ex)
         {
             response.Success = false;
             response.Message = ex.Message;
+
+            return response;
         }
 
-        return response;
     }
 
     //check user exists
