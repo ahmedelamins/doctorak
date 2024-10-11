@@ -302,6 +302,40 @@ public class AuthService : IAuthService
 
     }
 
+    public async Task<ServiceResponse<bool>> DeleteUser(int userId)
+    {
+        var response = new ServiceResponse<bool>();
+
+        try
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "User not found";
+
+                return response;
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            response.Message = "User has been deleted";
+
+            return response;
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+
+    }
+
     //check user exists
     private async Task<bool> UserExists(string email)
     {
