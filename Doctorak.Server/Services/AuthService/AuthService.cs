@@ -41,6 +41,7 @@ public class AuthService : IAuthService
 
 
             user.VerificationCode = GenerateRandomCode();
+            user.VerificationCodeExpiration = DateTime.Now.AddMinutes(10);
 
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -51,7 +52,7 @@ public class AuthService : IAuthService
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h4>Your verification code is:</h4>" +
+            string emailBody = "<h4>Your verification code, it is valid for 10 minutes</h4>" +
                                $"<h1>{user.VerificationCode}</1>";
 
 
