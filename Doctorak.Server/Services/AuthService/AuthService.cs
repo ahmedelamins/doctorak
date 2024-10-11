@@ -321,6 +321,7 @@ public class AuthService : IAuthService
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
+            response.Data = true;
             response.Message = "User has been deleted";
 
             return response;
