@@ -135,12 +135,12 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            user.VerificationCode = GenerateRandomCode();
+            user.PasswordResetCode = GenerateRandomCode();
 
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h4>Your password reset code is:</h4>" +
-                                   $"<h1>{user.VerificationCode}</1>";
+            string emailBody = "<h5>Your password reset code is:</h5>" +
+                                   $"<h1>{user.PasswordResetCode}</1>";
 
             await _emailService.SendEmail(user.Email, "Reset Your Password", emailBody);
 
@@ -173,7 +173,7 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            if (user.VerificationCode != code)
+            if (user.PasswordResetCode != code)
             {
                 response.Success = false;
                 response.Message = "Invalid code";
