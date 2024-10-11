@@ -52,14 +52,14 @@ public class AuthService : IAuthService
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h4>Your verification code, it is valid for 10 minutes</h4>" +
+            string emailBody = "<h4>Here is your verification code, it is valid for 10 minutes</h4>" +
                                $"<h1>{user.VerificationCode}</1>";
 
 
             await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
 
             response.Data = user.Id;
-            response.Message = "User created, please confirm email address";
+            response.Message = "Check your email!";
 
             return response;
         }
@@ -101,7 +101,7 @@ public class AuthService : IAuthService
 
             await _context.SaveChangesAsync();
 
-            string emailBody = $"<h1>Dear {user.FirstName},</h1>" +
+            string emailBody = $"<h2>Hello {user.FirstName},</h2>" +
                                   "<h4>Welcome to Doctorak! We are very happy to have you.</h4>";
 
 
@@ -137,10 +137,11 @@ public class AuthService : IAuthService
             }
 
             user.PasswordResetCode = GenerateRandomCode();
+            user.PasswordResetCodeExipration = DateTime.Now.AddMinutes(10);
 
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h5>Your password reset code is:</h5>" +
+            string emailBody = "<h5>Here is your verification code, it is valid for 10 minutes:</h5>" +
                                    $"<h1>{user.PasswordResetCode}</1>";
 
             await _emailService.SendEmail(user.Email, "Reset Your Password", emailBody);
