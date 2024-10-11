@@ -15,5 +15,7 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool Verified { get; set; } = false;
     public string? VerificationCode { get; set; }
+    public DateTime VerificationCodeExpiration { get; set; }
     public string? PasswordResetCode { get; set; }
+    public DateTime PasswordResetCodeExipration { get; set; }
 }
