@@ -113,4 +113,17 @@ public class AuthController : ControllerBase
 
     }
 
+    [HttpDelete("delete-user/{userId:int}"), Authorize]
+    public async Task<ActionResult<bool>> DeleteUser(int userId)
+    {
+        var response = await _authService.DeleteUser(userId);
+
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+
+        return Ok(response);
+    }
+
 }
