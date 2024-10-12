@@ -337,6 +337,17 @@ public class AuthService : IAuthService
 
     }
 
+    //generate refresh token
+    private string GenerateRefreshToken()
+    {
+        var randomNum = new byte[64];
+
+        using var rng = RandomNumberGenerator.Create();
+
+        rng.GetBytes(randomNum);
+        return Convert.ToBase64String(randomNum);
+    }
+
     //check user exists
     private async Task<bool> UserExists(string email)
     {
