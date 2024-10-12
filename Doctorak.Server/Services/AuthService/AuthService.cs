@@ -242,6 +242,34 @@ public class AuthService : IAuthService
 
     }
 
+    public async Task<ServiceResponse<string>> CreateRefreshToken(User user)
+    {
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            if (user.RefreshToken == null || user.RefreshTokenExpiry <= DateTime.Now)
+            {
+                response.Success = false;
+                response.Message = "Invalid token";
+
+                return response;
+            }
+
+            string token = CreateToken(user);
+
+            response.Data = token;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
     public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
     {
         var response = new ServiceResponse<bool>();
