@@ -201,9 +201,9 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<ServiceResponse<string>> Login(string email, string password)
+    public async Task<ServiceResponse<AuthResponse>> Login(string email, string password)
     {
-        var response = new ServiceResponse<string>();
+        var response = new ServiceResponse<AuthResponse>();
 
         try
         {
@@ -225,8 +225,19 @@ public class AuthService : IAuthService
 
                 return response;
             }
+            string accessToken = CreateToken(user);
 
-            response.Data = CreateToken(user);
+            string refreshToken = GenerateRefreshToken();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.Now.AddDays(7);
+
+            await _context.SaveChangesAsync();
+
+            response.Data = new AuthResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+            };
             response.Message = "Welcome back!";
 
             return response;
@@ -242,12 +253,14 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<ServiceResponse<string>> CreateRefreshToken(User user)
+    public async Task<ServiceResponse<string>> CreateRefreshToken(int userId)
     {
         var response = new ServiceResponse<string>();
 
         try
         {
+            var user = await _context.Users.FindAsync(userId);
+
             if (user.RefreshToken == null || user.RefreshTokenExpiry <= DateTime.Now)
             {
                 response.Success = false;
