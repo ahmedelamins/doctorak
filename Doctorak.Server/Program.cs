@@ -1,4 +1,5 @@
 global using Doctorak.Server.Data;
+global using Doctorak.Server.DTOs;
 global using Doctorak.Server.Models;
 global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations;
