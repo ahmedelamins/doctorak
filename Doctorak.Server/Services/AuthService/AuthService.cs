@@ -136,13 +136,13 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            user.PasswordResetCode = GenerateRandomCode();
-            user.PasswordResetCodeExipration = DateTime.Now.AddMinutes(10);
+            user.VerificationCode = GenerateRandomCode();
+            user.VerificationCodeExpiration = DateTime.Now.AddMinutes(10);
 
             await _context.SaveChangesAsync();
 
             string emailBody = "<h5>Here is your verification code, it is valid for 10 minutes:</h5>" +
-                                   $"<h1>{user.PasswordResetCode}</1>";
+                                   $"<h1>{user.VerificationCode}</1>";
 
             await _emailService.SendEmail(user.Email, "Reset Your Password", emailBody);
 
@@ -175,7 +175,7 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            if (user.PasswordResetCode != code)
+            if (user.VerificationCode != code)
             {
                 response.Success = false;
                 response.Message = "Invalid code";
@@ -183,7 +183,7 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            user.PasswordResetCode = null;
+            user.VerificationCode = null;
 
             await _context.SaveChangesAsync();
 
