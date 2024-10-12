@@ -253,15 +253,15 @@ public class AuthService : IAuthService
 
     }
 
-    public async Task<ServiceResponse<string>> CreateRefreshToken(int userId)
+    public async Task<ServiceResponse<string>> RefreshAccessToken(string refreshToken)
     {
         var response = new ServiceResponse<string>();
 
         try
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
-            if (user.RefreshToken == null || user.RefreshTokenExpiry <= DateTime.Now)
+            if (user == null)
             {
                 response.Success = false;
                 response.Message = "Invalid token";
@@ -269,9 +269,18 @@ public class AuthService : IAuthService
                 return response;
             }
 
-            string token = CreateToken(user);
+            if (user.RefreshTokenExpiry <= DateTime.Now)
+            {
+                response.Success = false;
+                response.Message = "Token expired";
 
-            response.Data = token;
+                return response;
+            }
+
+            string newToken = CreateToken(user);
+
+            response.Data = newToken;
+            response.Message = "New token generated";
 
             return response;
         }
