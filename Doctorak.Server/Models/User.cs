@@ -16,6 +16,6 @@ public class User
     public bool Verified { get; set; } = false;
     public string? VerificationCode { get; set; }
     public DateTime VerificationCodeExpiration { get; set; }
-    public string? PasswordResetCode { get; set; }
-    public DateTime PasswordResetCodeExipration { get; set; }
+    public string RefreshToken { get; set; } = string.Empty;
+    public DateTime RefreshTokenExpiry { get; set; }
 }
