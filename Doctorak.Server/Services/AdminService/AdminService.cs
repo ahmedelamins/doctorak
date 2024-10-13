@@ -120,13 +120,25 @@ public class AdminService : IAdminService
             return response;
         }
     }
-    public async Task<ServiceResponse<List<User>>> GetUsers()
+    public async Task<ServiceResponse<List<FetchUser>>> GetUsers()
     {
-        var response = new ServiceResponse<List<User>>();
+        var response = new ServiceResponse<List<FetchUser>>();
 
         try
         {
-            response.Data = await _context.Users.ToListAsync();
+            var users = await _context.Users.Select(u =>
+                new FetchUser
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Verified = u.Verified,
+                    JoinAt = u.CreatedAt
+                }
+            ).ToListAsync();
+
+            response.Data = users;
 
             return response;
         }
