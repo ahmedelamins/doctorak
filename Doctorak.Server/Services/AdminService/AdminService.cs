@@ -9,9 +9,22 @@ public class AdminService : IAdminService
         _context = context;
     }
 
-    public Task<ServiceResponse<int>> AdminReginster(User user, string password)
+    public async Task<ServiceResponse<int>> AdminReginster(User username, string password)
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<int>();
+
+        try
+        {
+            if (await )
+                return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
     public Task<ServiceResponse<string>> AdminLogin(string name, string password)
     {
