@@ -32,4 +32,13 @@ public class AdminController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("login")]
+    public async Task<ActionResult> Login([FromBody] AdminLogin request)
+    {
+        var response = await _adminService.AdminLogin(request.Username, request.Password);
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
+
 }
