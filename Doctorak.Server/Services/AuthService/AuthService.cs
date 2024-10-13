@@ -40,10 +40,6 @@ public class AuthService : IAuthService
                 return response;
             }
 
-
-            user.VerificationCode = GenerateRandomCode();
-            user.VerificationCodeExpiration = DateTime.Now.AddMinutes(10);
-
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
@@ -53,14 +49,13 @@ public class AuthService : IAuthService
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h4>Here is your verification code, it is valid for 10 minutes</h4>" +
-                               $"<h1>{user.VerificationCode}</1>";
+            string emailBody = $"<h2>Hello, {user.FirstName}!</h2>" +
+                                  "<h4>Welcome to Doctorak. We are very happy to have you.</h4>";
 
-
-            await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
+            await _emailService.SendEmail(user.Email, "Welcome To Doctorak!", emailBody);
 
             response.Data = user.Id;
-            response.Message = "Check your email!";
+            response.Message = "Welcome to Doctorak!";
 
             return response;
         }
@@ -69,53 +64,6 @@ public class AuthService : IAuthService
             response.Success = false;
             response.Message = ex.Message;
 
-            return response;
-        }
-
-    }
-
-    public async Task<ServiceResponse<string>> VerifyEmail(string email, string code)
-    {
-        var response = new ServiceResponse<string>();
-
-        try
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null)
-            {
-                response.Success = false;
-                response.Message = "User not found!";
-
-                return response;
-            }
-
-            if (user.VerificationCode != code)
-            {
-                response.Success = false;
-                response.Message = "Invalid code";
-
-                return response;
-            }
-
-            user.VerificationCode = null;
-
-            await _context.SaveChangesAsync();
-
-            string emailBody = $"<h2>Hello {user.FirstName},</h2>" +
-                                  "<h4>Welcome to Doctorak! We are very happy to have you.</h4>";
-
-
-            await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
-
-            response.Message = "Email verified successfully";
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-            response.Success = false;
-            response.Message = ex.Message;
             return response;
         }
 
