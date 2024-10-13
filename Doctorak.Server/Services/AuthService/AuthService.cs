@@ -389,9 +389,32 @@ public class AuthService : IAuthService
 
     }
 
-    public Task<ServiceResponse<List<User>>> FetchUsers()
+    public async Task<ServiceResponse<List<FetchUsers>>> FetchUsers()
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<List<FetchUsers>>();
+
+        try
+        {
+            var users = await _context.Users
+                .Select(user => new FetchUsers
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email
+                }).ToListAsync();
+
+            response.Data = users;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
 
     //generate refresh token
