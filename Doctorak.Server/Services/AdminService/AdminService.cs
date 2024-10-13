@@ -90,7 +90,35 @@ public class AdminService : IAdminService
         }
 
     }
+    public async Task<ServiceResponse<bool>> DeleteUser(int userId)
+    {
+        var response = new ServiceResponse<bool>();
 
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                response.Success = false;
+                response.Message = "Not found";
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            response.Data = true;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
     private async Task<bool> AdminExists(string username)
     {
         return await _context.Admins.AnyAsync(a =>
