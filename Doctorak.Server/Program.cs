@@ -6,6 +6,7 @@ global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Security.Cryptography;
+using Doctorak.Server.Services.AdminServicel;
 using Doctorak.Server.Services.AuthService;
 using Doctorak.Server.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -73,7 +74,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 //registering repositories
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IAdminService, IAdminService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 
 var app = builder.Build();
