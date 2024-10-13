@@ -25,12 +25,7 @@ public class AdminController : ControllerBase
                 request.Password
             );
 
-        if (!response.Success)
-        {
-            return BadRequest(response.Message);
-        }
-
-        return Ok(response);
+        return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
     [HttpPost("login")]
