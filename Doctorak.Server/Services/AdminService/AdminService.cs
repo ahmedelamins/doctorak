@@ -108,6 +108,7 @@ public class AdminService : IAdminService
             await _context.SaveChangesAsync();
 
             response.Data = true;
+            response.Message = "User delete.";
 
             return response;
         }
