@@ -17,7 +17,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<ServiceResponse<int>>> Register([FromBody] UserRegister request)
+    public async Task<ActionResult> Register([FromBody] UserRegister request)
     {
         if (string.IsNullOrEmpty(request.Email))
         {
@@ -35,26 +35,7 @@ public class AuthController : ControllerBase
                 request.Password
             );
 
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-
-        return Ok(response);
-    }
-
-    [HttpPost("verify-email")]
-    public async Task<IActionResult> VerifyEmail(string email, string code)
-    {
-        var response = await _authService.VerifyEmail(email, code);
-
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-        return Ok(response);
+        return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
     [HttpPost("login")]
@@ -143,7 +124,7 @@ public class AuthController : ControllerBase
     {
         var response = await _authService.FetchUsers();
 
-        return !response.Success ? BadRequest(response.Message) : Ok(response);
+        return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
 }
