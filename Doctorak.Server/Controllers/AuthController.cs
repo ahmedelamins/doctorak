@@ -138,4 +138,12 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("fetch-user"), Authorize(Roles = "Admin")]
+    public async Task<ActionResult> FetchUsers()
+    {
+        var response = await _authService.FetchUsers();
+
+        return !response.Success ? BadRequest(response.Message) : Ok(response);
+    }
+
 }
