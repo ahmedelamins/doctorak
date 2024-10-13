@@ -36,4 +36,12 @@ public class AdminController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
+    [HttpDelete("delete-user/{userId:int}")]
+    public async Task<ActionResult> DeleteUser(int userId)
+    {
+        var response = await _adminService.DeleteUser(userId);
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
+
 }
