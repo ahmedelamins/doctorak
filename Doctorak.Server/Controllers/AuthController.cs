@@ -38,79 +38,6 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-        return Ok(response);
-    }
-
-    public async Task<ActionResult<ServiceResponse<string>>> RefreshToken([FromBody] RefreshToken request)
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-        return Ok(response);
-    }
-
-
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-        return Ok(response);
-    }
-
-
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-        return Ok(response);
-    }
-
-
-        if (!response.Success)
-        {
-            return BadRequest(response);
-        }
-
-    [HttpDelete("delete-user/{userId:int}"), Authorize]
-    public async Task<ActionResult> DeleteUser(int userId)
-
-
-        if (!response.Success)
-        return response.Success ? Ok(response) : BadRequest(response.Message);
-    }
-
-    [HttpGet("fetch-user"), Authorize(Roles = "Admin")]
-    public async Task<ActionResult> FetchUsers()
-    {
-        var response = await _authService.FetchUsers();
-
-        return response.Success ? Ok(response) : BadRequest(response.Message);
-
-    [HttpPost("login")]
-    public async Task<ActionResult> Login([FromBody] UserLogin request)
-        if (!response.Success)
-        {
-            return BadRequest(response.Message);
-        }
-
-        return Ok(response);
-    [HttpPost("refresh-token")]
-    public async Task<ActionResult> RefreshToken([FromBody] RefreshToken request)
-    {
-        var response = await _authService.RefreshAccessToken(request.Token);
-
-        return response.Success ? Ok(response) : BadRequest(response.Message);
-    }
-
     [HttpPost("forgot-password")]
     public async Task<ActionResult> ForgotPassword(string email)
     {
@@ -120,34 +47,52 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("verify-password-reset")]
-    public async Task<ActionResult> VerifyReset(string email, string code)
+    public async Task<ActionResult> VerifyPasswordReset(string email, string code)
     {
         var response = await _authService.VerifyPasswordReset(email, code);
 
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpPost("change-password"), Authorize]
-    public async Task<ActionResult> ChangePassword([FromBody] ChangePassword request)
+    [HttpPost("login")]
+    public async Task<ActionResult> Login([FromBody] UserLogin request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        var response = await _authService.ChangePassword(int.Parse(userId), request.Password);
+        var response = await _authService.Login(request.Email, request.Password);
 
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpDelete("delete-user/{userId:int}"), Authorize]
-    public async Task<ActionResult<bool>> DeleteUser(int userId)
+    [HttpPost("refresh-token")]
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshToken request)
+    {
+        var response = await _authService.RefreshAccessToken(request.Token);
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
+
+    [HttpPost("change-password"), Authorize]
+    public async Task<ActionResult> ChangePassword([FromBody] string password)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await _authService.ChangePassword(int.Parse(userId), password);
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
+
+    [HttpPost("delete-user/{userId:int}"), Authorize]
+    public async Task<ActionResult> DeleteUser(int userId)
     {
         var response = await _authService.DeleteUser(userId);
 
-        if (!response.Success)
-        {
-            return BadRequest(response.Message);
-        }
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
 
-        return Ok(response);
+    [HttpGet("fetch-users"), Authorize(Roles = "Admin")]
+    public async Task<ActionResult> FetchUsers()
+    {
+        var response = await _authService.FetchUsers();
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
 }
