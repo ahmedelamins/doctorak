@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Doctorak.Server.Controllers;
 
@@ -36,7 +37,7 @@ public class AdminController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpDelete("delete-user/{userId:int}")]
+    [HttpDelete("delete-user/{userId:int}"), Authorize]
     public async Task<ActionResult> DeleteUser(int userId)
     {
         var response = await _adminService.DeleteUser(userId);
