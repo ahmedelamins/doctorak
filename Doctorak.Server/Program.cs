@@ -72,6 +72,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 //registering repositories
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAdminService, IAdminService>();
 
 
 var app = builder.Build();
