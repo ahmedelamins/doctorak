@@ -5,6 +5,7 @@ global using Doctorak.Server.Services.AdminService;
 global using Microsoft.EntityFrameworkCore;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Security.Cryptography;
 using Doctorak.Server.Services.AuthService;
 using Doctorak.Server.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
