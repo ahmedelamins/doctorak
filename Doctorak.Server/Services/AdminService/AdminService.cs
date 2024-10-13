@@ -16,7 +16,16 @@ public class AdminService : IAdminService
         try
         {
             if (await UserExists(admin.Username))
+            {
+                response.Success = false;
+                response.Message = "Username taken";
+
                 return response;
+            }
+
+
+
+            return response;
         }
         catch (Exception ex)
         {
@@ -39,5 +48,16 @@ public class AdminService : IAdminService
     {
         return await _context.Admins.AnyAsync(a =>
             a.Username.ToLower().Equals(username.ToLower()));
+    }
+
+    private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512(passwordSalt))
+        {
+            var computeHash =
+            hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+
+            return computeHash.SequenceEqual(passwordHash);
+        }
     }
 }
