@@ -9,13 +9,13 @@ public class AdminService : IAdminService
         _context = context;
     }
 
-    public async Task<ServiceResponse<int>> AdminReginster(User username, string password)
+    public async Task<ServiceResponse<int>> AdminReginster(Admin admin, string password)
     {
         var response = new ServiceResponse<int>();
 
         try
         {
-            if (await )
+            if (await UserExists(admin.Username))
                 return response;
         }
         catch (Exception ex)
@@ -26,7 +26,7 @@ public class AdminService : IAdminService
             return response;
         }
     }
-    public Task<ServiceResponse<string>> AdminLogin(string name, string password)
+    public Task<ServiceResponse<string>> AdminLogin(string username, string password)
     {
         throw new NotImplementedException();
     }
@@ -35,4 +35,9 @@ public class AdminService : IAdminService
         throw new NotImplementedException();
     }
 
+    private async Task<bool> UserExists(string username)
+    {
+        return await _context.Admins.AnyAsync(a =>
+            a.Username.ToLower().Equals(username.ToLower()));
+    }
 }
