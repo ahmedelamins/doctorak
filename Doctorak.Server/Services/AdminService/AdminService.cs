@@ -1,12 +1,18 @@
-﻿namespace Doctorak.Server.Services.AdminServicel;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace Doctorak.Server.Services.AdminServicel;
 
 public class AdminService : IAdminService
 {
     private readonly DataContext _context;
+    private readonly IConfiguration _config;
 
-    public AdminService(DataContext context)
+    public AdminService(DataContext context, IConfiguration config)
     {
         _context = context;
+        _config = config;
     }
 
     public async Task<ServiceResponse<int>> AdminRegister(Admin admin, string password)
@@ -43,13 +49,39 @@ public class AdminService : IAdminService
             return response;
         }
     }
-    public Task<ServiceResponse<string>> AdminLogin(string username, string password)
+    public async Task<ServiceResponse<string>> AdminLogin(string username, string password)
     {
-        throw new NotImplementedException();
-    }
-    public Task<ServiceResponse<bool>> AdminDelete(int userId)
-    {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<string>();
+
+        try
+        {
+            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Username.ToLower().Equals(username.ToLower()));
+
+            if (admin == null)
+            {
+                response.Success = false;
+                response.Message = "Not found";
+
+                return response;
+            }
+
+            if (!VerifyPasswordHash(password, admin.PasswordHash, admin.PasswordSalt))
+            {
+                response.Success = false;
+                response.Message = "Wrong password";
+
+                return response;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+
     }
 
     private async Task<bool> UserExists(string username)
@@ -74,5 +106,30 @@ public class AdminService : IAdminService
 
             return computeHash.SequenceEqual(passwordHash);
         }
+    }
+
+    private string CreateToken(Admin admin)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+            new Claim(ClaimTypes.Name, admin.Username)
+        };
+
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8
+            .GetBytes(_config.GetSection("AppSettings:Token").Value));
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken
+            (
+               claims: claims,
+               expires: DateTime.Now.AddHours(1),
+               signingCredentials: creds
+            );
+
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return jwt;
     }
 }

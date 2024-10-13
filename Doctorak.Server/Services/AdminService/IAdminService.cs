@@ -4,5 +4,4 @@ public interface IAdminService
 {
     Task<ServiceResponse<int>> AdminRegister(Admin user, string password);
     Task<ServiceResponse<string>> AdminLogin(string username, string password);
-    Task<ServiceResponse<bool>> AdminDelete(int userId);
 }
