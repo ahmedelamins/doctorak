@@ -18,6 +18,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _emailService = emailService;
     }
+
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
         var response = new ServiceResponse<int>();
@@ -72,6 +73,7 @@ public class AuthService : IAuthService
         }
 
     }
+
     public async Task<ServiceResponse<string>> VerifyEmail(string email, string code)
     {
         var response = new ServiceResponse<string>();
@@ -291,6 +293,7 @@ public class AuthService : IAuthService
             return response;
         }
     }
+
     public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
     {
         var response = new ServiceResponse<bool>();
@@ -384,6 +387,11 @@ public class AuthService : IAuthService
             return response;
         }
 
+    }
+
+    public Task<ServiceResponse<List<User>>> FetchUsers()
+    {
+        throw new NotImplementedException();
     }
 
     //generate refresh token
