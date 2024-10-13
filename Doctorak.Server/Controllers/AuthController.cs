@@ -38,22 +38,71 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpPost("verify-email")]
-    public async Task<ActionResult> VerifyEmail(string email, string code)
-    {
-        var response = await _authService.VerifyEmail(email, code);
 
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
+    public async Task<ActionResult<ServiceResponse<string>>> RefreshToken([FromBody] RefreshToken request)
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
+    }
+
+
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+    [HttpDelete("delete-user/{userId:int}"), Authorize]
+    public async Task<ActionResult> DeleteUser(int userId)
+
+
+        if (!response.Success)
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
+
+    [HttpGet("fetch-user"), Authorize(Roles = "Admin")]
+    public async Task<ActionResult> FetchUsers()
+    {
+        var response = await _authService.FetchUsers();
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
 
     [HttpPost("login")]
     public async Task<ActionResult> Login([FromBody] UserLogin request)
-    {
-        var response = await _authService.Login(request.Email, request.Password);
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
 
-        return response.Success ? Ok(response) : BadRequest(response.Message);
-    }
-
+        return Ok(response);
     [HttpPost("refresh-token")]
     public async Task<ActionResult> RefreshToken([FromBody] RefreshToken request)
     {
@@ -88,12 +137,17 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpDelete("delete-account/{userId:int}"), Authorize]
-    public async Task<ActionResult> DeleteUser(int userId)
+    [HttpDelete("delete-user/{userId:int}"), Authorize]
+    public async Task<ActionResult<bool>> DeleteUser(int userId)
     {
         var response = await _authService.DeleteUser(userId);
 
-        return response.Success ? Ok(response) : BadRequest(response.Message);
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+
+        return Ok(response);
     }
 
 }

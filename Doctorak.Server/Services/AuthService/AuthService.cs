@@ -17,6 +17,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _emailService = emailService;
     }
+
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
         var response = new ServiceResponse<int>();
@@ -38,10 +39,6 @@ public class AuthService : IAuthService
                 return response;
             }
 
-
-            user.VerificationCode = GenerateRandomCode();
-            user.VerificationCodeExpiration = DateTime.Now.AddMinutes(10);
-
             CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
@@ -51,14 +48,13 @@ public class AuthService : IAuthService
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            string emailBody = "<h4>Here is your verification code, it is valid for 10 minutes</h4>" +
-                               $"<h1>{user.VerificationCode}</1>";
+            string emailBody = $"<h2>Hello, {user.FirstName}!</h2>" +
+                                  "<h4>Welcome to Doctorak. We are very happy to have you.</h4>";
 
-
-            await _emailService.SendEmail(user.Email, "Email Verification Code", emailBody);
+            await _emailService.SendEmail(user.Email, "Welcome To Doctorak!", emailBody);
 
             response.Data = user.Id;
-            response.Message = "Check your email!";
+            response.Message = "Welcome to Doctorak!";
 
             return response;
         }
@@ -67,53 +63,6 @@ public class AuthService : IAuthService
             response.Success = false;
             response.Message = ex.Message;
 
-            return response;
-        }
-
-    }
-    public async Task<ServiceResponse<string>> VerifyEmail(string email, string code)
-    {
-        var response = new ServiceResponse<string>();
-
-        try
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-
-            if (user == null)
-            {
-                response.Success = false;
-                response.Message = "User not found!";
-
-                return response;
-            }
-
-            if (user.VerificationCode != code)
-            {
-                response.Success = false;
-                response.Message = "Invalid code";
-
-                return response;
-            }
-
-            user.Verified = true;
-            user.VerificationCode = null;
-
-            await _context.SaveChangesAsync();
-
-            string emailBody = $"<h2>Hello {user.FirstName},</h2>" +
-                                  "<h4>Welcome to Doctorak! We are very happy to have you.</h4>";
-
-
-            await _emailService.SendEmail(user.Email, "Email Verified!", emailBody);
-
-            response.Message = "Email verified successfully";
-
-            return response;
-        }
-        catch (Exception ex)
-        {
-            response.Success = false;
-            response.Message = ex.Message;
             return response;
         }
 
@@ -291,6 +240,7 @@ public class AuthService : IAuthService
             return response;
         }
     }
+
     public async Task<ServiceResponse<bool>> ChangePassword(int userId, string newPassword)
     {
         var response = new ServiceResponse<bool>();
@@ -386,6 +336,35 @@ public class AuthService : IAuthService
 
     }
 
+    public async Task<ServiceResponse<List<FetchUsers>>> FetchUsers()
+    {
+        var response = new ServiceResponse<List<FetchUsers>>();
+
+        try
+        {
+            var users = await _context.Users
+                .Select(user => new FetchUsers
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = user.Role
+                }).ToListAsync();
+
+            response.Data = users;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
+
     //generate refresh token
     private string GenerateRefreshToken()
     {
@@ -446,7 +425,8 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Email)
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
         };
 
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8

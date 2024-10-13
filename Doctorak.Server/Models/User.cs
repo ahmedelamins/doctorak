@@ -10,10 +10,9 @@ public class User
     public string LastName { get; set; } = string.Empty;
     [Required, EmailAddress]
     public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = "User";
     public byte[] PasswordHash { get; set; } = new byte[32];
     public byte[] PasswordSalt { get; set; } = new byte[32];
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public bool Verified { get; set; } = false;
     public string? VerificationCode { get; set; }
     public DateTime VerificationCodeExpiration { get; set; }
     public string RefreshToken { get; set; } = string.Empty;
