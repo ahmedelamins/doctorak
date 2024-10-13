@@ -21,7 +21,7 @@ public class AdminService : IAdminService
 
         try
         {
-            if (await UserExists(admin.Username))
+            if (await AdminExists(admin.Username))
             {
                 response.Success = false;
                 response.Message = "Username taken";
@@ -91,7 +91,7 @@ public class AdminService : IAdminService
 
     }
 
-    private async Task<bool> UserExists(string username)
+    private async Task<bool> AdminExists(string username)
     {
         return await _context.Admins.AnyAsync(a =>
             a.Username.ToLower().Equals(username.ToLower()));
