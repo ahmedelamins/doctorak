@@ -9,7 +9,7 @@ public class AdminService : IAdminService
         _context = context;
     }
 
-    public async Task<ServiceResponse<int>> AdminReginster(Admin admin, string password)
+    public async Task<ServiceResponse<int>> AdminRegister(Admin admin, string password)
     {
         var response = new ServiceResponse<int>();
 
