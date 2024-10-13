@@ -23,7 +23,15 @@ public class AdminService : IAdminService
                 return response;
             }
 
-            GeneratePassword
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+            admin.PasswordHash = passwordHash;
+            admin.PasswordSalt = passwordSalt;
+
+            _context.Admins.Add(admin);
+            await _context.SaveChangesAsync();
+
+            response.Data = admin.Id;
+            response.Message = $"Welcome, admin {admin.Username}";
 
             return response;
         }
