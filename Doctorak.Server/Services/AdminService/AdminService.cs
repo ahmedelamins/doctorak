@@ -73,6 +73,13 @@ public class AdminService : IAdminService
                 return response;
             }
 
+            var token = CreateToken(admin);
+
+            response.Data = token;
+            response.Message = $"Welcome, {admin.Username}";
+
+            return response;
+
         }
         catch (Exception ex)
         {
