@@ -120,6 +120,24 @@ public class AdminService : IAdminService
             return response;
         }
     }
+    public async Task<ServiceResponse<List<User>>> GetUsers()
+    {
+        var response = new ServiceResponse<List<User>>();
+
+        try
+        {
+            response.Data = await _context.Users.ToListAsync();
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
     private async Task<bool> AdminExists(string username)
     {
         return await _context.Admins.AnyAsync(a =>
