@@ -55,7 +55,7 @@ public class AuthService : IAuthService
             await _emailService.SendEmail(doctor.Email, "Welcome To Doctorak!", emailBody);
 
             response.Data = doctor.Id;
-            response.Message = "Welcome to Doctorak!";
+            response.Message = $"Welcome, Dr. {doctor.FirstName}!";
 
             return response;
         }
