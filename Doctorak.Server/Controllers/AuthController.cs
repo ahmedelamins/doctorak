@@ -39,7 +39,28 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("doctor/register")]
-    public async Task<ActionResult> DoctorRegister([FromBody])
+    public async Task<ActionResult> DoctorRegister([FromBody] DoctorRegister request)
+    {
+        var response = await _authService
+            .RegisterDoctor(
+                new Doctor
+                {
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Gender = request.Gender,
+                    Specialties = request.Specialties,
+                    PracticeName = request.PracticeName,
+                    Location = request.Location,
+                    Address = request.Address,
+                    Qualifications = request.Qualifications,
+                    About = request.About
+                },
+                request.Password
+            );
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
 
     [HttpPost("forgot-password")]
     public async Task<ActionResult> ForgotPassword(string email)
