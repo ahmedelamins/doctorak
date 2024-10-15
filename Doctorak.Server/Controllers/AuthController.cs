@@ -119,4 +119,11 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
+    [HttpGet("fetch-doctors"), Authorize(Roles = "Admin")]
+    public async Task<ActionResult> FetchDoctors()
+    {
+        var response = await _authService.FetchDoctors();
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
+    }
 }
