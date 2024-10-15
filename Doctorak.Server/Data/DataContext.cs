@@ -7,7 +7,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().ToTable("users");
+        modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Doctor>().ToTable("Doctors");  //separate table
     }
 }
