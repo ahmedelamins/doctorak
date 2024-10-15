@@ -38,6 +38,9 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
+    [HttpPost("doctor/register")]
+    public async Task<ActionResult> DoctorRegister([FromBody])
+
     [HttpPost("forgot-password")]
     public async Task<ActionResult> ForgotPassword(string email)
     {
