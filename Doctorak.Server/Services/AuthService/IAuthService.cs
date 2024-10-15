@@ -11,4 +11,5 @@ public interface IAuthService
     Task<ServiceResponse<bool>> DeleteUser(int userId);
     //admin roles
     Task<ServiceResponse<List<FetchUsers>>> FetchUsers();
+    Task<ServiceResponse<List<FetchDoctors>>> FetchDoctors();
 }
