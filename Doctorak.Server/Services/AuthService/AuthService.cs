@@ -17,7 +17,54 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _emailService = emailService;
     }
+    public async Task<ServiceResponse<int>> RegisterDoctor(Doctor doctor, string password)
+    {
+        var response = new ServiceResponse<int>();
 
+        try
+        {
+            if (await UserExists(doctor.Email))
+            {
+                response.Success = false;
+                response.Message = "Email is already used";
+
+                return response;
+            }
+
+            if (!ValidPassword(password))
+            {
+                response.Success = false;
+                response.Message = "Invalid password";
+                return response;
+            }
+
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+
+            doctor.PasswordHash = passwordHash;
+            doctor.PasswordSalt = passwordSalt;
+
+
+            _context.Users.Add(doctor);
+            await _context.SaveChangesAsync();
+
+            string emailBody = $"<h2>Hello, Dr. {doctor.FirstName}!</h2>" +
+                                  "<h4>Welcome to Doctorak. We are very happy to have you.</h4>";
+
+            await _emailService.SendEmail(doctor.Email, "Welcome To Doctorak!", emailBody);
+
+            response.Data = doctor.Id;
+            response.Message = "Welcome to Doctorak!";
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
         var response = new ServiceResponse<int>();
