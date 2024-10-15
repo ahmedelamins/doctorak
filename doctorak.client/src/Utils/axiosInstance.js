@@ -14,3 +14,18 @@ axiosInstance.interceptors.request.use((config) => {
 
     return config;
 });
+
+//handle unauthorized red
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status == 400) {
+            localStorage.removeItem("Token");
+            Window.location.href = "/"  //redirect to landing page
+        }
+
+        return promise.reject(error);
+    }
+);
+
+export default axiosInstance;
