@@ -67,6 +67,7 @@ public class AuthService : IAuthService
             return response;
         }
     }
+
     public async Task<ServiceResponse<int>> Register(User user, string password)
     {
         var response = new ServiceResponse<int>();
