@@ -17,6 +17,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
         _emailService = emailService;
     }
+
     public async Task<ServiceResponse<int>> RegisterDoctor(Doctor doctor, string password)
     {
         var response = new ServiceResponse<int>();
@@ -384,6 +385,40 @@ public class AuthService : IAuthService
             return response;
         }
 
+    }
+
+    public async Task<ServiceResponse<List<FetchDoctors>>> FetchDoctors()
+    {
+        var response = new ServiceResponse<List<FetchDoctors>>();
+
+        try
+        {
+            var doctors = await _context.Doctors
+                .Select(d => new FetchDoctors
+                {
+                    Id = d.Id,
+                    FirstName = d.FirstName,
+                    LastName = d.LastName,
+                    Email = d.Email,
+                    Gender = d.Gender,
+                    Specialties = d.Specialties,
+                    PracticeName = d.PracticeName,
+                    Location = d.Location,
+                    Address = d.Address,
+                    Qualifications = d.Qualifications,
+                }).ToListAsync();
+
+            response.Data = doctors;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
 
     public async Task<ServiceResponse<List<FetchUsers>>> FetchUsers()
