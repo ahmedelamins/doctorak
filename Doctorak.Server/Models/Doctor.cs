@@ -13,7 +13,7 @@ public class Doctor : User
     [Required]
     public string Address { get; set; } = string.Empty;
     [Required]
-    public string Qualification { get; set; } = string.Empty;
+    public List<string> Qualifications { get; set; } = new List<string>();
     [Required]
     public string About { get; set; } = string.Empty;
 
