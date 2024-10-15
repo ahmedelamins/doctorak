@@ -2,6 +2,7 @@
 public interface IAuthService
 {
     Task<ServiceResponse<int>> Register(User user, string password);
+    Task<ServiceResponse<int>> RegisterDoctor(Doctor doctor, string password);
     Task<ServiceResponse<AuthResponse>> Login(string email, string password);
     Task<ServiceResponse<string>> RefreshAccessToken(string refreshToken);
     Task<ServiceResponse<string>> ForgotPassword(string email);
