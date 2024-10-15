@@ -43,6 +43,8 @@ public class AuthService : IAuthService
             doctor.PasswordHash = passwordHash;
             doctor.PasswordSalt = passwordSalt;
 
+            doctor.Role = "Doctor";
+
 
             _context.Users.Add(doctor);
             await _context.SaveChangesAsync();
