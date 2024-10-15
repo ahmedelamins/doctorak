@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpPost("doctor/register")]
+    [HttpPost("doctor-register")]
     public async Task<ActionResult> DoctorRegister([FromBody] DoctorRegister request)
     {
         var response = await _authService
