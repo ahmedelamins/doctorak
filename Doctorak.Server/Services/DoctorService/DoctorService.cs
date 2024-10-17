@@ -64,7 +64,15 @@ public class DoctorService : IDoctorService
 
         try
         {
+            slot.DoctorId = doctorId;
 
+            _context.AvailabilitySlots.Add(slot);
+            await _context.SaveChangesAsync();
+
+            response.Data = slot;
+            response.Message = "New slot added";
+
+            return response;
         }
         catch (Exception ex)
         {
