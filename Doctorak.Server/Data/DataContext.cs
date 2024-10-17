@@ -5,6 +5,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<User> Users { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<AvailabilitySlot> AvailabilitySlots { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
