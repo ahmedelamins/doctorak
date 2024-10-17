@@ -126,7 +126,24 @@ public class DoctorService : IDoctorService
 
         try
         {
+            var slot = await _context.AvailabilitySlots
+                .FirstOrDefaultAsync(s => s.DoctorId == doctorId && s.Id == slotId);
 
+            if (slot == null)
+            {
+                response.Success = false;
+                response.Message = "Not found";
+
+                return response;
+            }
+
+            _context.AvailabilitySlots.Remove(slot);
+            await _context.SaveChangesAsync();
+
+            response.Data = true;
+            response.Message = "Slot delete";
+
+            return response;
         }
         catch (Exception ex)
         {
