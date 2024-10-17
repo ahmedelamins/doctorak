@@ -6,7 +6,10 @@ public class AvailabilitySlot
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public int DoctorId { get; set; }
-    public DayOfWeek Day { get; set; }
-    public TimeSpan Starts { get; set; }
-    public TimeSpan Ends { get; set; }
+    [Required]
+    public string Day { get; set; } = string.Empty;
+    [Required]
+    public TimeOnly Starts { get; set; }
+    [Required]
+    public TimeOnly Ends { get; set; }
 }
