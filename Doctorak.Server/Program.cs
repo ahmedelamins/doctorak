@@ -7,6 +7,7 @@ global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Security.Cryptography;
 using Doctorak.Server.Services.AppointmentService;
 using Doctorak.Server.Services.AuthService;
+using Doctorak.Server.Services.DoctorService;
 using Doctorak.Server.Services.EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -73,6 +74,7 @@ builder.Services.AddDbContext<DataContext>(options =>
 //registering repositories
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 
