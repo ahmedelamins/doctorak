@@ -11,6 +11,7 @@ public class User
     [Required, EmailAddress]
     public string Email { get; set; } = string.Empty;
     public string Role { get; set; } = "User";
+    public List<Appointment> Appointments { get; set; } = new List<Appointment>();
     public byte[] PasswordHash { get; set; } = new byte[32];
     public byte[] PasswordSalt { get; set; } = new byte[32];
     public string? VerificationCode { get; set; }
