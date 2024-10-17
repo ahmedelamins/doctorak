@@ -26,11 +26,22 @@ public class DoctorController : ControllerBase
     }
 
     [HttpPost("/add-slot"), Authorize(Roles = "Doctor")]
-    public async Task<ActionResult> CreateSlot([FromBody] AvailabilitySlot slot)
+    public async Task<ActionResult> CreateSlot([FromBody] CreateSlot request)
     {
         var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        // Map the DTO to AvailabilitySlot model
+        var slot = new AvailabilitySlot
+        {
+            DoctorId = doctorId,
+            Day = request.Day,
+            Starts = request.Starts,
+            Ends = request.Ends
+        };
+
         var response = await _doctorService.CreateAvailabilitySlot(doctorId, slot);
 
         return response.Success ? Ok(response) : BadRequest(response);
     }
+
 }
