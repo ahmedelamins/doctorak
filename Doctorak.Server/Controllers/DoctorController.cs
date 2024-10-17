@@ -1,5 +1,7 @@
 ﻿using Doctorak.Server.Services.DoctorService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Doctorak.Server.Controllers;
 
@@ -23,7 +25,12 @@ public class DoctorController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response);
     }
 
-    //public async Task<ActionResult>
-    //public async Task<ActionResult>
-    //public async Task<ActionResult>
+    [HttpPost("/add-slot"), Authorize(Roles = "Doctor")]
+    public async Task<ActionResult> CreateSlot([FromBody] AvailabilitySlot slot)
+    {
+        var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var response = await _doctorService.CreateAvailabilitySlot(doctorId, slot);
+
+        return response.Success ? Ok(response) : BadRequest(response);
+    }
 }
