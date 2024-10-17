@@ -15,11 +15,10 @@ public class DoctorService : IDoctorService
 
         try
         {
-            var slots = await _context.AvailabilitySlots
+
+            response.Data = await _context.AvailabilitySlots
                 .Where(s => s.DoctorId == doctorId)
                 .ToListAsync();
-
-            response.Data = slots;
 
             return response;
         }
