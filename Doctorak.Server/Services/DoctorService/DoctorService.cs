@@ -35,10 +35,10 @@ public class DoctorService : IDoctorService
 
         try
         {
-            var slots = await _context.AvailabilitySlots
+            var slot = await _context.AvailabilitySlots
                 .FirstOrDefaultAsync(s => s.DoctorId == doctorId && s.Id == slotId);
 
-            if (slots == null)
+            if (slot == null)
             {
                 response.Success = false;
                 response.Message = "Not found";
@@ -46,7 +46,7 @@ public class DoctorService : IDoctorService
                 return response;
             }
 
-            response.Data = slots;
+            response.Data = slot;
 
             return response;
         }
@@ -106,7 +106,7 @@ public class DoctorService : IDoctorService
 
             await _context.SaveChangesAsync();
 
-            response.Data = updatedSlot;
+            response.Data = slot;
             response.Message = "Slot updated";
 
             return response;
@@ -141,7 +141,7 @@ public class DoctorService : IDoctorService
             await _context.SaveChangesAsync();
 
             response.Data = true;
-            response.Message = "Slot delete";
+            response.Message = "Slot deleted";
 
             return response;
         }
