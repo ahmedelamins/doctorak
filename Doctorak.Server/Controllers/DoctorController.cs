@@ -1,6 +1,5 @@
 ﻿using Doctorak.Server.Services.DoctorService;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Doctorak.Server.Controllers;
 
@@ -16,10 +15,9 @@ public class DoctorController : ControllerBase
         _doctorService = doctorService;
     }
 
-    [HttpGet("fetch-slots")]
-    public async Task<ActionResult> FetchSlots()
+    [HttpGet("fetch-slots/{doctorId:int}")]
+    public async Task<ActionResult> FetchSlots(int doctorId)
     {
-        var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var response = await _doctorService.FetchAvailabilitySlots(doctorId);
 
         return response.Success ? Ok(response) : BadRequest(response);
