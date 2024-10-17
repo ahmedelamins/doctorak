@@ -3,27 +3,99 @@ namespace Doctorak.Server.Services.DoctorService;
 
 public class DoctorService : IDoctorService
 {
-    public Task<ServiceResponse<List<AvailabilitySlot>>> GetAvailabilitySlots(int doctorId)
+    private readonly DataContext _context;
+
+    public DoctorService(DataContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
-    public Task<ServiceResponse<AvailabilitySlot>> GetAvailabilitySlot(int doctorId, int slotId)
+    public async Task<ServiceResponse<List<AvailabilitySlot>>> FetchAvailabilitySlots(int doctorId)
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<List<AvailabilitySlot>>();
+
+        try
+        {
+            var slots = await _context.AvailabilitySlots
+                .Where(s => s.DoctorId == doctorId)
+                .ToListAsync();
+
+            response.Data = slots;
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
-    public Task<ServiceResponse<AvailabilitySlot>> CreateAvailabilitySlot(int doctorId, AvailabilitySlot slot)
+    public async Task<ServiceResponse<AvailabilitySlot>> FetchAvailabilitySlot(int doctorId, int slotId)
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<AvailabilitySlot>();
+
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
+    }
+    public async Task<ServiceResponse<AvailabilitySlot>> CreateAvailabilitySlot(int doctorId, AvailabilitySlot slot)
+    {
+        var response = new ServiceResponse<AvailabilitySlot>();
+
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
 
-    public Task<ServiceResponse<AvailabilitySlot>> UpdateAvailabilitySlot(int doctorId, int slotId, AvailabilitySlot updatedSlot)
+    public async Task<ServiceResponse<AvailabilitySlot>> UpdateAvailabilitySlot(int doctorId, int slotId, AvailabilitySlot updatedSlot)
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<AvailabilitySlot>();
+
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
 
-    public Task<ServiceResponse<bool>> DeleteAvailabilitySlot(int doctorId, int slotId)
+    public async Task<ServiceResponse<bool>> DeleteAvailabilitySlot(int doctorId, int slotId)
     {
-        throw new NotImplementedException();
+        var response = new ServiceResponse<bool>();
+
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            response.Success = false;
+            response.Message = ex.Message;
+
+            return response;
+        }
     }
 
 }
