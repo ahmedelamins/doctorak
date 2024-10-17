@@ -19,6 +19,6 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<Doctor>()
             .HasMany(d => d.Appointments)
             .WithOne()
-            .HasForeignKey(a => a.UserId);   // doctor & appointments, 1 => n
+            .HasForeignKey(a => a.DoctorId);   // doctor & appointments, 1 => n
     }
 }
