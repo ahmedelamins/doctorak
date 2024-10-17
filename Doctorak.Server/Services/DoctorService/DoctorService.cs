@@ -89,7 +89,27 @@ public class DoctorService : IDoctorService
 
         try
         {
+            var slot = await _context.AvailabilitySlots
+                .FirstOrDefaultAsync(s => s.DoctorId == doctorId && s.Id == slotId);
 
+            if (slot == null)
+            {
+                response.Success = false;
+                response.Message = "Not found";
+
+                return response;
+            }
+
+            slot.Day = updatedSlot.Day;
+            slot.Starts = updatedSlot.Starts;
+            slot.Ends = updatedSlot.Ends;
+
+            await _context.SaveChangesAsync();
+
+            response.Data = updatedSlot;
+            response.Message = "Slot updated";
+
+            return response;
         }
         catch (Exception ex)
         {
