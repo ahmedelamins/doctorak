@@ -6,7 +6,6 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<AvailabilitySlot> AvailabilitySlots { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().ToTable("Users");
@@ -25,6 +24,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         modelBuilder.Entity<Doctor>()
             .HasMany(d => d.AvailabilitySlots)
             .WithOne()
-            .HasForeignKey(v => v.DoctorId);    //doctor & slots
+            .HasForeignKey(a => a.DoctorId);   // doctor & slots, 1 => n
+
     }
 }
