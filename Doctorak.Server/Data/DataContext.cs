@@ -21,5 +21,10 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .WithOne()
             .HasForeignKey(a => a.DoctorId);   // doctor & appointments, 1 => n
 
+        modelBuilder.Entity<Doctor>()
+           .HasMany(d => d.AvailabilitySlots)
+           .WithOne()
+           .HasForeignKey(a => a.DoctorId);   // doctor & availabiliy, 1 => n
+
     }
 }
