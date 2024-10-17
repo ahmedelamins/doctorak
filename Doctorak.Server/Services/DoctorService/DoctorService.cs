@@ -15,7 +15,6 @@ public class DoctorService : IDoctorService
 
         try
         {
-
             response.Data = await _context.AvailabilitySlots
                 .Where(s => s.DoctorId == doctorId)
                 .ToListAsync();
@@ -36,7 +35,20 @@ public class DoctorService : IDoctorService
 
         try
         {
+            var slots = await _context.AvailabilitySlots
+                .FirstOrDefaultAsync(s => s.DoctorId == doctorId && s.Id == slotId);
 
+            if (slots == null)
+            {
+                response.Success = false;
+                response.Message = "Not found";
+
+                return response;
+            }
+
+            response.Data = slots;
+
+            return response;
         }
         catch (Exception ex)
         {
