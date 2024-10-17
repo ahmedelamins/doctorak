@@ -10,5 +10,10 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     {
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Doctor>().ToTable("Doctors");  //separate table
+
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Appointments)
+            .WithOne()
+            .HasForeignKey(a => a.UserId);   //user & appointments, 1 => n
     }
 }
