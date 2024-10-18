@@ -35,7 +35,12 @@ public class DoctorController : ControllerBase
             DoctorId = doctorId,
             Day = request.Day,
             Starts = request.Starts,
-            Ends = request.Ends
+            Ends = request.Ends,
+            Breaks = request.Breaks.Select(b => new BreakSlot
+            {
+                BreakStarts = b.BreakStarts,
+                BreakEnds = b.BreakEnds,
+            }).ToList()
         };
 
         var response = await _doctorService.CreateAvailabilitySlot(doctorId, slot);
