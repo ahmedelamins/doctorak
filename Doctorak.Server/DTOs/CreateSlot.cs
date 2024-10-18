@@ -9,4 +9,5 @@ public class CreateSlot
     public TimeOnly Starts { get; set; }
     [Required]
     public TimeOnly Ends { get; set; }
+    public List<BreakSlot> Breaks { get; set; } = new List<BreakSlot>();
 }
