@@ -30,7 +30,6 @@ public class DoctorController : ControllerBase
     {
         var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        // Map the DTO to AvailabilitySlot model
         var slot = new AvailabilitySlot
         {
             DoctorId = doctorId,
@@ -42,6 +41,23 @@ public class DoctorController : ControllerBase
         var response = await _doctorService.CreateAvailabilitySlot(doctorId, slot);
 
         return response.Success ? Ok(response) : BadRequest(response);
+    }
+
+    [HttpPut("update-slot/{slotId:int}"), Authorize(Roles = "Doctor")]
+    public async Task<ActionResult> UpdateSlot([FromBody] UpdateSlot request, int slotId)
+    {
+        var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        var updatedSlot = new AvailabilitySlot
+        {
+            Day = request.Day,
+            Starts = request.Starts,
+            Ends = request.Ends
+        };
+
+        var response = await _doctorService.UpdateAvailabilitySlot(doctorId, slotId, updatedSlot);
+
+        return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
 }
