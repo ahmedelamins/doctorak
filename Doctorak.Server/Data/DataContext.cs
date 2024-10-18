@@ -27,5 +27,10 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .WithOne()
             .HasForeignKey(a => a.DoctorId);   // doctor & slots, 1 => n
 
+        modelBuilder.Entity<AvailabilitySlot>()
+            .HasMany(a => a.Breaks)
+            .WithOne()
+            .HasForeignKey(b => b.AvailabilitySlotId);   //availability and break, 1 => n
+
     }
 }
