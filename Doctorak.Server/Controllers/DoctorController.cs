@@ -65,7 +65,7 @@ public class DoctorController : ControllerBase
         return response.Success ? Ok(response) : BadRequest(response.Message);
     }
 
-    [HttpPut("delete-slot/{slotId:int}"), Authorize(Roles = "Doctor")]
+    [HttpDelete("delete-slot/{slotId:int}"), Authorize(Roles = "Doctor")]
     public async Task<ActionResult> DeleteSlot(int slotId)
     {
         var doctorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
